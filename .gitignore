@@ -1,0 +1,11 @@
+# Ignore node_modules, duh
+/node_modules/*
+
+# Ignore config
+config.json
+
+# Ignore members
+/members/*
+
+# Ignore manifest
+/manifest/*
