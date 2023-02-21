@@ -17,15 +17,17 @@ export async function processGroups(client: Client, groups: Group[]) {
 async function processGroup(client: Client, group: Group) {
   const members = await getMembersForGroup(group.id);
 
-  for (const member of members) {
-    // call a function for each member
-    try {
-      User.processMember(client, member as Member);
-    } catch (err) {
-      Logger.saveError(`Failed to scan member: ${member.destinyUserInfo.displayName}`, err);
-    }
+  if (members) {
+    for (const member of members) {
+      // call a function for each member
+      try {
+        User.processMember(client, member as Member);
+      } catch (err) {
+        Logger.saveError(`Failed to scan member: ${member.destinyUserInfo.displayName}`, err);
+      }
 
-    await Util.sleep(1000);
+      await Util.sleep(1000);
+    }
   }
 }
 
