@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ManifestVersionResponse } from '../interfaces/ManifestVersion.interface';
 import { IManifest } from '../interfaces/Manifest.interface';
 import Config from '../config.json';
+import * as Logger from './log.handler';
 
 const manifestLocation = './manifest';
 const manifestVersionLocation = './manifest/version.json';
@@ -45,7 +46,7 @@ async function getManifestVersion(): Promise<ManifestVersionResponse> {
 
     return data;
   } catch (error) {
-    console.error(`Error getting manifest version`, error);
+    Logger.saveError(`Error getting manifest version`, error);
   }
 }
 
@@ -65,7 +66,7 @@ async function getManifest(manifest: ManifestVersionResponse) {
 
       // Save file
     } catch (error) {
-      console.error(`Error getting manifest component: ${comp}`, error);
+      Logger.saveError(`Error getting manifest component: ${comp}`, error);
     }
   }
 }
@@ -78,7 +79,7 @@ async function loadManifest() {
       );
       Manifest[comp] = fileContents;
     } catch (error) {
-      console.error(`Error loading manifest component: ${comp}`, error);
+      Logger.saveError(`Error loading manifest component: ${comp}`, error);
     }
   }
 }

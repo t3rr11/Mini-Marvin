@@ -5,6 +5,7 @@ import { Member } from '../interfaces/Member.interface';
 import { MemberProfileResponse } from '../interfaces/Responses.interface';
 import { Client } from 'discord.js';
 import Config from '../config.json';
+import * as Logger from './log.handler';
 
 export async function processMember(client: Client, member: Member) {
   const memberFileLocation = `./members/${member.bungieNetUserInfo.supplementalDisplayName}.json`;
@@ -31,7 +32,7 @@ async function processExistingMember(client: Client, member: Member) {
       await Broadcast.checkForItems(client, member, oldMemberData);
     }
   } catch (error) {
-    console.error(`Failed to read file: ${memberFileLocation}`, error);
+    Logger.saveError(`Failed to read file: ${memberFileLocation}`, error);
   }
 }
 
@@ -49,7 +50,7 @@ async function getMemberAdditionalDetails(member: Member) {
 
       // Check for error conditions
       if (data.ErrorCode === 1 && !data.Response.profileRecords.data.records) {
-        console.log(`No records found, more than likely on private: ${member.destinyUserInfo.displayName}`);
+        Logger.saveLog(`No records found, more than likely on private: ${member.destinyUserInfo.displayName}`);
         member.isPrivate = true;
         member.recentItems = [];
       } else {
@@ -61,7 +62,7 @@ async function getMemberAdditionalDetails(member: Member) {
         member.recentItems = data.Response.profileCollectibles.data.recentCollectibleHashes;
       }
     } catch (error) {
-      console.error(`Error getting member: ${member.destinyUserInfo.displayName}`, error);
+      Logger.saveError(`Error getting member: ${member.destinyUserInfo.displayName}`, error);
     }
   }
 }

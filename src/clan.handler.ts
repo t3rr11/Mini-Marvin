@@ -5,6 +5,7 @@ import { Member } from '../interfaces/Member.interface';
 import { MemberResponse, GroupMembersResponse } from '../interfaces/Responses.interface';
 import * as Util from './util.handler';
 import * as User from './user.handler';
+import * as Logger from './log.handler';
 import { Client } from 'discord.js';
 
 export async function processGroups(client: Client, groups: Group[]) {
@@ -21,7 +22,7 @@ async function processGroup(client: Client, group: Group) {
     try {
       User.processMember(client, member as Member);
     } catch (err) {
-      console.error(`Failed to scan member: ${member.destinyUserInfo.displayName}`);
+      Logger.saveError(`Failed to scan member: ${member.destinyUserInfo.displayName}`, err);
     }
 
     await Util.sleep(1000);
@@ -43,6 +44,6 @@ async function getMembersForGroup(groupId: number): Promise<MemberResponse[]> {
 
     return data.Response.results;
   } catch (error) {
-    console.error('Error getting members for group:', error);
+    Logger.saveError(`Error getting members for group`, error);
   }
 }

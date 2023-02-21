@@ -3,6 +3,7 @@ import Config from './config.json';
 import * as ManifestHandler from './src/manifest.handler';
 import * as Clan from './src/clan.handler';
 import * as Util from './src/util.handler';
+import * as Logger from './src/log.handler';
 import { Client, GatewayIntentBits } from 'discord.js';
 
 export const client = new Client({
@@ -31,18 +32,18 @@ client.on('ready', async () => {
 async function run() {
   await initalChecks();
   await ManifestHandler.checkManifestVersion();
-  console.log('Manifest is mounted');
+  Logger.saveLog(`Manifest is mounted`);
   const groups = Config.clans;
 
-  console.log('Starting the scan loop');
+  Logger.saveLog(`Starting the scan loop`);
   while (true) {
     try {
       await Clan.processGroups(client, groups);
     } catch (error) {
-      console.error('Error processing groups:', error);
+      Logger.saveError(`Error processing groups`, error);
     }
 
-    console.log(`Finished scanning, restarting...`);
+    Logger.saveLog(`Finished scanning, restarting...`);
     await Util.sleep(1000);
   }
 }
