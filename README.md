@@ -31,9 +31,11 @@ Make sure you have node installed (https://nodejs.org/en/) install the LTS versi
 - Install ts-node globally by using `npm install ts-node -g`
 - Then to run the app: `ts-node .`
 
-## Adding items to tracking
+## Configuring
 
 If you want to add items to tracking, grab the collectible hashes **NOT ITEM HASHES** from items and add them to the array in `config.json`.
+
+If you want to start the bot using PM2 you can use `pm2 start run.sh` and it will handle the rest.
 
 ## Finally
 
