@@ -31,6 +31,10 @@ Make sure you have node installed (https://nodejs.org/en/) install the LTS versi
 - Install ts-node globally by using `npm install ts-node -g`
 - Then to run the app: `ts-node .`
 
+## Adding items to tracking
+
+If you want to add items to tracking, grab the collectible hashes **NOT ITEM HASHES** from items and add them to the array in `config.json`.
+
 ## Finally
 
 That's it, that's all you get, goodluck!
