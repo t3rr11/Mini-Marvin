@@ -25,7 +25,7 @@ async function initalChecks() {
 }
 
 client.on('ready', async () => {
-  console.log('Bot is ready');
+  Logger.saveLog(`Bot is ready`);
   run();
 });
 
