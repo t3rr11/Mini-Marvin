@@ -11,13 +11,15 @@ export async function processMember(client: Client, member: Member) {
   const memberFileLocation = `./members/${member.bungieNetUserInfo.supplementalDisplayName}.json`;
 
   // Get additional member information
-  await getMemberAdditionalDetails(member);
+  await getMemberAdditionalDetails(member)
+    .then(async () => {
+      // If existing user, check for broadcasts
+      if (fs.existsSync(memberFileLocation)) await processExistingMember(client, member);
 
-  // If existing user, check for broadcasts
-  if (fs.existsSync(memberFileLocation)) await processExistingMember(client, member);
-
-  // Write to file
-  fs.writeFileSync(memberFileLocation, JSON.stringify(member, null, 2));
+      // Write to file
+      fs.writeFileSync(memberFileLocation, JSON.stringify(member, null, 2));
+    })
+    .catch((err) => {});
 }
 
 async function processExistingMember(client: Client, member: Member) {
@@ -61,8 +63,11 @@ async function getMemberAdditionalDetails(member: Member) {
       if (!member.isPrivate) {
         member.recentItems = data.Response.profileCollectibles.data.recentCollectibleHashes;
       }
+
+      return true;
     } catch (error) {
       Logger.saveError(`Error getting member: ${member.destinyUserInfo.displayName}`, error);
+      throw error;
     }
   }
 }
