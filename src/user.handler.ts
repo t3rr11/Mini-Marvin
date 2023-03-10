@@ -31,6 +31,7 @@ async function processExistingMember(client: Client, member: Member) {
 
     // Catch if user has recentItems if not then ignore.
     if (oldMemberData.recentItems) {
+      await Broadcast.checkForGuardianRank(client, member, oldMemberData);
       await Broadcast.checkForItems(client, member, oldMemberData);
     }
   } catch (error) {
@@ -45,7 +46,7 @@ async function getMemberAdditionalDetails(member: Member) {
         'X-API-Key': Config.bungieAPIKey,
       };
       const response = await axios.get(
-        `https://www.bungie.net/Platform/Destiny2/${member.destinyUserInfo.membershipType}/Profile/${member.destinyUserInfo.membershipId}/?components=800,900`,
+        `https://www.bungie.net/Platform/Destiny2/${member.destinyUserInfo.membershipType}/Profile/${member.destinyUserInfo.membershipId}/?components=100,800,900`,
         { headers }
       );
       const data: MemberProfileResponse = await response.data;
@@ -61,6 +62,7 @@ async function getMemberAdditionalDetails(member: Member) {
 
       // Check for items
       if (!member.isPrivate) {
+        member.currentGuardianRank = data.Response.profile.data.currentGuardianRank;
         member.recentItems = data.Response.profileCollectibles.data.recentCollectibleHashes;
       }
 

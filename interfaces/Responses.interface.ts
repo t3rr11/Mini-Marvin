@@ -52,6 +52,29 @@ export interface MemberProfileResponse {
   Response: {
     responseMintedTimestamp: string;
     secondaryComponentsMintedTimestamp: string;
+    profile: {
+      data: {
+        userInfo: {
+          crossSaveOverride: number;
+          applicableMembershipTypes: number[];
+          isPublic: boolean;
+          membershipType: number;
+          membershipId: string;
+          displayName: string;
+          bungieGlobalDisplayName: string;
+          bungieGlobalDisplayNameCode: number;
+        };
+        dateLastPlayed: string;
+        versionsOwned: number;
+        characterIds: string[];
+        seasonHashes: number[];
+        eventCardHashesOwned: number[];
+        currentSeasonHash: number;
+        currentSeasonRewardPowerCap: number;
+        currentGuardianRank: number;
+        lifetimeHighestGuardianRank: number;
+      };
+    };
     profileRecords: {
       data: {
         score: number;

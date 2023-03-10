@@ -30,4 +30,5 @@ export interface Member {
   joinDate: string;
   isPrivate: boolean;
   recentItems: number[];
+  currentGuardianRank: number;
 }
