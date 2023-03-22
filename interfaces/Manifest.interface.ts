@@ -5,6 +5,12 @@ export interface IManifest {
   DestinyCollectibleDefinition: {
     [key: string]: DestinyCollectibleDefinition;
   };
+  DestinyPresentationNodeDefinition: {
+    [key: string]: DestinyPresentationNodeDefinition;
+  };
+  DestinyRecordDefinition: {
+    [key: string]: DestinyRecordDefinition;
+  };
 }
 
 export interface DestinyItemDefinitionLite {
@@ -66,6 +72,103 @@ export interface DestinyCollectibleDefinition {
   traitIds: any[];
   traitHashes: any[];
   parentNodeHashes: number[];
+  hash: number;
+  index: number;
+  redacted: boolean;
+  blacklisted: boolean;
+}
+
+export interface DestinyPresentationNodeDefinition {
+  displayProperties: {
+    description: string;
+    name: string;
+    hasIcon: boolean;
+  };
+  nodeType: number;
+  scope: number;
+  objectiveHash: number;
+  children: {
+    presentationNodes: {
+      presentationNodeHash: number;
+      nodeDisplayPriority: number;
+    }[];
+    collectibles: any[];
+    records: any[];
+    metrics: any[];
+    craftables: any[];
+  };
+  displayStyle: number;
+  screenStyle: number;
+  requirements: {
+    entitlementUnavailableMessage: string;
+  };
+  disableChildSubscreenNavigation: boolean;
+  categoryScoreUnlockValueHash: number;
+  maxCategoryRecordScore: number;
+  presentationNodeType: number;
+  traitIds: any[];
+  traitHashes: any[];
+  parentNodeHashes: any[];
+  hash: number;
+  index: number;
+  redacted: boolean;
+  blacklisted: boolean;
+  completionRecordHash?: number;
+}
+
+export interface DestinyRecordDefinition {
+  displayProperties: {
+    description: string;
+    name: string;
+    hasIcon: boolean;
+  };
+  scope: number;
+  objectiveHashes: Array<number>;
+  recordValueStyle: number;
+  forTitleGilding: boolean;
+  shouldShowLargeIcons: boolean;
+  titleInfo: {
+    hasTitle: boolean;
+    titlesByGender: {
+      Male: string;
+      Female: string;
+    };
+    titlesByGenderHash: {
+      '2204441813': string;
+      '3111576190': string;
+    };
+  };
+  completionInfo: {
+    partialCompletionObjectiveCountThreshold: number;
+    ScoreValue: number;
+    shouldFireToast: boolean;
+    toastStyle: number;
+  };
+  stateInfo: {
+    featuredPriority: number;
+    completeUnlockHash: number;
+    claimedUnlockHash: number;
+    completedCounterUnlockValueHash: number;
+  };
+  requirements: {
+    entitlementUnavailableMessage: string;
+  };
+  expirationInfo: {
+    hasExpiration: boolean;
+    description: string;
+  };
+  intervalInfo: {
+    intervalObjectives: Array<any>;
+    intervalRewards: Array<any>;
+    originalObjectiveArrayInsertionIndex: number;
+    isIntervalVersionedFromNormalRecord: boolean;
+  };
+  rewardItems: Array<any>;
+  anyRewardHasConditionalVisibility: boolean;
+  presentationNodeType: number;
+  traitIds: Array<any>;
+  traitHashes: Array<any>;
+  parentNodeHashes: Array<any>;
   hash: number;
   index: number;
   redacted: boolean;

@@ -6,6 +6,7 @@ import { MemberProfileResponse } from '../interfaces/Responses.interface';
 import { Client } from 'discord.js';
 import Config from '../config.json';
 import * as Logger from './log.handler';
+import { Manifest } from './manifest.handler';
 
 export async function processMember(client: Client, member: Member) {
   const memberFileLocation = `./members/${member.bungieNetUserInfo.supplementalDisplayName}.json`;
@@ -14,7 +15,7 @@ export async function processMember(client: Client, member: Member) {
   await getMemberAdditionalDetails(member)
     .then(async () => {
       // If existing user, check for broadcasts
-      if (fs.existsSync(memberFileLocation)) await processExistingMember(client, member);
+      if (fs.existsSync(memberFileLocation) && !Config.testing) await processExistingMember(client, member);
 
       // Write to file
       fs.writeFileSync(memberFileLocation, JSON.stringify(member, null, 2));
@@ -33,6 +34,7 @@ async function processExistingMember(client: Client, member: Member) {
     if (oldMemberData.recentItems) {
       await Broadcast.checkForGuardianRank(client, member, oldMemberData);
       await Broadcast.checkForItems(client, member, oldMemberData);
+      await Broadcast.checkForTitles(client, member, oldMemberData);
     }
   } catch (error) {
     Logger.saveError(`Failed to read file: ${memberFileLocation}`, error);
@@ -56,6 +58,7 @@ async function getMemberAdditionalDetails(member: Member) {
         Logger.saveLog(`No records found, more than likely on private: ${member.destinyUserInfo.displayName}`);
         member.isPrivate = true;
         member.recentItems = [];
+        member.titles = [];
       } else {
         member.isPrivate = false;
       }
@@ -64,6 +67,19 @@ async function getMemberAdditionalDetails(member: Member) {
       if (!member.isPrivate) {
         member.currentGuardianRank = data.Response.profile.data.currentGuardianRank;
         member.recentItems = data.Response.profileCollectibles.data.recentCollectibleHashes;
+
+        // Titles
+        member.titles = Manifest.DestinyPresentationNodeDefinition[
+          data.Response.profileRecords.data.recordSealsRootNodeHash
+        ].children.presentationNodes.map((presso) => {
+          if (Manifest.DestinyPresentationNodeDefinition[presso.presentationNodeHash]?.completionRecordHash) {
+            const hash = Manifest.DestinyPresentationNodeDefinition[presso.presentationNodeHash]?.completionRecordHash;
+            return {
+              recordHash: hash,
+              complete: data.Response.profileRecords.data.records[hash]?.objectives[0]?.complete ? true : false,
+            };
+          }
+        });
       }
 
       return true;

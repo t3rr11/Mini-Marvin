@@ -31,4 +31,8 @@ export interface Member {
   isPrivate: boolean;
   recentItems: number[];
   currentGuardianRank: number;
+  titles: {
+    recordHash: number;
+    complete: boolean;
+  }[];
 }

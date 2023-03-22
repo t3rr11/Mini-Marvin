@@ -11,6 +11,7 @@ const manifestComponents = [
   'DestinyInventoryItemLiteDefinition',
   'DestinyRecordDefinition',
   'DestinyCollectibleDefinition',
+  'DestinyPresentationNodeDefinition',
 ];
 export const Manifest: Partial<IManifest> = {};
 

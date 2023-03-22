@@ -31,3 +31,19 @@ export async function checkForItems(client: Client, member: Member, oldMemberDat
     }
   }
 }
+
+export async function checkForTitles(client: Client, member: Member, oldMemberData: Member) {
+  if (oldMemberData.titles) {
+    for (let title of member.titles) {
+      const oldTitleData = oldMemberData.titles.find((e) => e?.recordHash === title?.recordHash);
+      if (oldTitleData?.complete === false && title?.complete === true) {
+        const channel = await client.channels.fetch(Config.broadcastChannelId);
+        (channel as TextChannel).send(
+          `${member.destinyUserInfo.displayName} just obtained the ${
+            Manifest.DestinyRecordDefinition[title.recordHash.toString()].titleInfo.titlesByGender['Male']
+          } title!`
+        );
+      }
+    }
+  }
+}
