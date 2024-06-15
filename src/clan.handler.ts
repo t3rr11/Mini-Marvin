@@ -1,11 +1,11 @@
 import axios from 'axios';
 import Config from '../config.json';
-import { Group } from '../interfaces/Group.interface';
-import { Member } from '../interfaces/Member.interface';
-import { MemberResponse, GroupMembersResponse } from '../interfaces/Responses.interface';
 import * as Util from './util.handler';
 import * as User from './user.handler';
 import * as Logger from './log.handler';
+import { Group } from '../interfaces/Group.interface';
+import { Member } from '../interfaces/Member.interface';
+import { MemberResponse, GroupMembersResponse } from '../interfaces/Responses.interface';
 import { Client } from 'discord.js';
 
 export async function processGroups(client: Client, groups: Group[]) {
@@ -21,7 +21,12 @@ async function processGroup(client: Client, group: Group) {
     for (const member of members) {
       // call a function for each member
       try {
-        User.processMember(client, member as Member);
+        if(member.bungieNetUserInfo) {
+          User.processMember(client, member as Member);
+        }
+        else {
+          // User does not have a bungieNetUserInfo component, unsure why.
+        }
       } catch (err) {
         Logger.saveError(`Failed to scan member: ${member.destinyUserInfo.displayName}`, err);
       }

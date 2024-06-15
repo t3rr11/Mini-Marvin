@@ -1,11 +1,11 @@
+import * as Logger from './log.handler';
+import * as Broadcast from './broadcast.handler';
 import fs from 'fs';
 import axios from 'axios';
-import * as Broadcast from './broadcast.handler';
+import Config from '../config.json';
 import { Member } from '../interfaces/Member.interface';
 import { MemberProfileResponse } from '../interfaces/Responses.interface';
 import { Client } from 'discord.js';
-import Config from '../config.json';
-import * as Logger from './log.handler';
 import { Manifest } from './manifest.handler';
 
 export async function processMember(client: Client, member: Member) {

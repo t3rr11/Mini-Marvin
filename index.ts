@@ -5,10 +5,13 @@ import * as Clan from './src/clan.handler';
 import * as Util from './src/util.handler';
 import * as Logger from './src/log.handler';
 import { Client, GatewayIntentBits } from 'discord.js';
+import { createMessageHandler } from './src/message.handler';
 
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
+
+let manifestCheck: NodeJS.Timer | null = null;
 
 async function initalChecks() {
   if (!fs.existsSync('./members')) {
@@ -29,10 +32,29 @@ client.on('ready', async () => {
   run();
 });
 
+async function test() {
+  Logger.saveLog(`Testing`);
+  const memberFileLocation = `./members/Terrii#5043.json`;
+  const member = JSON.parse(await fs.promises.readFile(memberFileLocation, { encoding: 'utf-8' }));
+  createMessageHandler({ client, member, config: Config, type: 'GuardianRank' });
+}
+
 async function run() {
   await initalChecks();
   await ManifestHandler.checkManifestVersion();
   Logger.saveLog(`Manifest is mounted`);
+
+  manifestCheck = setInterval(async () => {
+    Logger.saveLog(`Checking for new manifest`);
+    await ManifestHandler.checkManifestVersion();
+  }, 10 * 60 * 1000);
+
+  if (Config.testing) {
+    setInterval(async () => {
+      test();
+    }, 10000);
+  }
+
   const groups = Config.clans;
 
   Logger.saveLog(`Starting the scan loop`);
