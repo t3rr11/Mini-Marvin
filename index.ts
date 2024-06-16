@@ -6,6 +6,7 @@ import * as Util from './src/util.handler';
 import * as Logger from './src/log.handler';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { createMessageHandler } from './src/message.handler';
+import { IClanConfig } from './interfaces/Config.interface';
 
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -36,7 +37,8 @@ async function test() {
   Logger.saveLog(`Testing`);
   const memberFileLocation = `./members/Terrii#5043.json`;
   const member = JSON.parse(await fs.promises.readFile(memberFileLocation, { encoding: 'utf-8' }));
-  createMessageHandler({ client, member, config: Config, type: 'GuardianRank' });
+  const memberClanConfig: IClanConfig = Config.clans.find((e) => e.id.toString() === member.groupId);
+  createMessageHandler({ client, member, config: Config, clan: memberClanConfig, type: 'GuardianRank' });
 }
 
 async function run() {
