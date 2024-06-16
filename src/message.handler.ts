@@ -1,46 +1,43 @@
 import { Channel, Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { Member } from '../interfaces/Member.interface';
-import { IConfig } from '../interfaces/Config.interface';
+import { IClanConfig, IConfig } from '../interfaces/Config.interface';
 import { Manifest } from './manifest.handler';
 
 export interface IMessage {
   client: Client;
   member: Member;
   config: IConfig;
+  clan: IClanConfig;
   type: 'GuardianRank' | 'Item' | 'Title';
   hash?: number;
 }
 
-export async function createMessageHandler({ client, member, config, type, hash }: IMessage) {
+export async function createMessageHandler({ client, member, config, clan, type, hash }: IMessage) {
   const channel = await client.channels.fetch(config.broadcastChannelId);
 
   switch (type) {
     case 'GuardianRank': {
-      return sendGuardianRankMessage(channel, member);
+      return sendGuardianRankMessage(channel, member, clan);
     }
     case 'Item': {
-      return sendItemMessage(channel, member, hash);
+      return sendItemMessage(channel, member, clan, hash);
     }
     case 'Title': {
-      return sendTitleMessage(channel, member, hash);
+      return sendTitleMessage(channel, member, clan, hash);
     }
   }
 }
 
-function sendGuardianRankMessage(channel: Channel, member: Member) {
+function sendGuardianRankMessage(channel: Channel, member: Member, clan: IClanConfig) {
   const memberName = member.destinyUserInfo.displayName;
   const description = `${memberName} has just hit Guardian Rank ${member.currentGuardianRank}`;
 
-  const embed = new EmbedBuilder()
-    .setColor('#0099ff')
-    .setTitle('Marvins Minions')
-    .setDescription(description)
-    .setTimestamp();
+  const embed = new EmbedBuilder().setColor('#0099ff').setTitle(clan.name).setDescription(description).setTimestamp();
 
   (channel as TextChannel).send({ embeds: [embed] });
 }
 
-function sendItemMessage(channel: Channel, member: Member, hash: number) {
+function sendItemMessage(channel: Channel, member: Member, clan: IClanConfig, hash: number) {
   if (!hash) return;
 
   const memberName = member.destinyUserInfo.displayName;
@@ -56,7 +53,7 @@ function sendItemMessage(channel: Channel, member: Member, hash: number) {
 
   const embed = new EmbedBuilder()
     .setColor('#0099ff')
-    .setTitle('Marvins Minions')
+    .setTitle(clan.name)
     .setDescription(description)
     .addFields([{ name: 'Source', value: collectible.sourceString || 'Unknown' }])
     .setTimestamp();
@@ -71,7 +68,7 @@ function sendItemMessage(channel: Channel, member: Member, hash: number) {
   (channel as TextChannel).send({ embeds: [embed] });
 }
 
-function sendTitleMessage(channel: Channel, member: Member, hash: number) {
+function sendTitleMessage(channel: Channel, member: Member, clan: IClanConfig, hash: number) {
   if (!hash) return;
 
   const memberName = member.destinyUserInfo.displayName;
@@ -84,7 +81,7 @@ function sendTitleMessage(channel: Channel, member: Member, hash: number) {
 
   const embed = new EmbedBuilder()
     .setColor('#0099ff')
-    .setTitle('Marvins Minions')
+    .setTitle(clan.name)
     .setDescription(description)
     .addFields([{ name: 'Name', value: title.displayProperties.name || 'Unknown' }])
     .addFields([{ name: 'Source', value: title.displayProperties.description || 'Unknown' }])

@@ -6,11 +6,12 @@ import { exoticArmor, exoticWeapons } from './manifest.handler';
 import { createMessageHandler } from './message.handler';
 
 export async function checkForGuardianRank(client: Client, member: Member, oldMemberData: Member) {
+  const memberClanConfig: IClanConfig = Config.clans.find((e) => e.id.toString() === member.groupId);
   const previousGuardianRank = oldMemberData?.currentGuardianRank;
   const isHigherGuardianRank = member.currentGuardianRank > oldMemberData.currentGuardianRank;
 
   if (previousGuardianRank && isHigherGuardianRank) {
-    createMessageHandler({ client, member, config: Config, type: 'GuardianRank' });
+    createMessageHandler({ client, member, config: Config, clan: memberClanConfig, type: 'GuardianRank' });
   }
 }
 
@@ -28,12 +29,14 @@ export async function checkForItems(client: Client, member: Member, oldMemberDat
     const isCustomCollectible = memberClanConfig.customCollectibles.includes(res);
 
     if (isExoticWeapon || isExoticArmor || isCustomCollectible) {
-      createMessageHandler({ client, member, config: Config, type: 'Item', hash: res });
+      createMessageHandler({ client, member, config: Config, clan: memberClanConfig, type: 'Item', hash: res });
     }
   }
 }
 
 export async function checkForTitles(client: Client, member: Member, oldMemberData: Member) {
+  const memberClanConfig: IClanConfig = Config.clans.find((e) => e.id.toString() === member.groupId);
+
   if (oldMemberData.titles) {
     for (let title of member.titles) {
       const oldTitleData = oldMemberData.titles.find((e) => e?.recordHash === title?.recordHash);
@@ -41,7 +44,14 @@ export async function checkForTitles(client: Client, member: Member, oldMemberDa
       const isTitleNowComplete = title?.complete === true;
 
       if (wasTitleComplete && isTitleNowComplete) {
-        createMessageHandler({ client, member, config: Config, type: 'Title', hash: title.recordHash });
+        createMessageHandler({
+          client,
+          member,
+          config: Config,
+          clan: memberClanConfig,
+          type: 'Title',
+          hash: title.recordHash,
+        });
       }
     }
   }
